@@ -1,0 +1,92 @@
+services:
+  frontend-blue:
+    build:
+      context: ./frontend/sobi-front
+      dockerfile: Dockerfile
+    image: sobi/frontend:blue
+    container_name: sobi-frontend-blue
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_BASE_URL=https://13.125.215.242
+      - NEXT_PUBLIC_FRONTEND_URL=https://13.125.215.242
+    depends_on:
+      - backend-blue
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - sobi-net
+
+  frontend-green:
+    build:
+      context: ./frontend/sobi-front
+      dockerfile: Dockerfile
+    image: sobi/frontend:green
+    container_name: sobi-frontend-green
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_BASE_URL=https://13.125.215.242
+      - NEXT_PUBLIC_FRONTEND_URL=https://13.125.215.242
+    depends_on:
+      - backend-green
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - sobi-net
+
+  backend-blue:
+    build:
+      context: ./backend/sobi_backend
+      dockerfile: ../Dockerfile
+    image: sobi/backend:blue
+    container_name: sobi-backend-blue
+    environment:
+      - DATABASE_URL=jdbc:postgresql://sobi-db:5432/sobi
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - JPA_SHOW_SQL=true
+      - JPA_DDL_AUTO=update
+      - JPA_OPEN_IN_VIEW=false
+      - JWT_SECRET=${JWT_SECRET}
+      - MQTT_BROKER_URL=tcp://mqtt:1883
+      - BASKET_CACHE_TTL_SECONDS=7200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AI_RECOMMENDATION_URL=http://172.26.6.236:9000/recommend
+    restart: unless-stopped
+    expose:
+      - "8080"
+    networks:
+      - sobi-net
+
+  backend-green:
+    build:
+      context: ./backend/sobi_backend
+      dockerfile: ../Dockerfile
+    image: sobi/backend:green
+    container_name: sobi-backend-green
+    environment:
+      - DATABASE_URL=jdbc:postgresql://sobi-db:5432/sobi
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - JPA_SHOW_SQL=true
+      - JPA_DDL_AUTO=update
+      - JPA_OPEN_IN_VIEW=false
+      - JWT_SECRET=${JWT_SECRET}
+      - MQTT_BROKER_URL=tcp://mqtt:1883
+      - BASKET_CACHE_TTL_SECONDS=7200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AI_RECOMMENDATION_URL=http://172.26.6.236:9000/recommend
+    restart: unless-stopped
+    expose:
+      - "8080"
+    networks:
+      - sobi-net
+
+networks:
+  sobi-net:
+    external: true
